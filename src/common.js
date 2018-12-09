@@ -23,7 +23,7 @@ const inProduction =
     (typeof process !== "undefined" && process.env.NODE_ENV === "production") ||
     verifyMinified.name !== "verifyMinified"
 
-let autoFreeze = !inProduction;
+let autoFreeze = !inProduction
 
 // 当前运行环境是否原生实现Proxy/Reflect特性
 let useProxies = typeof Proxy !== "undefined" && typeof Reflect !== "undefined"
@@ -34,12 +34,13 @@ export function setAutoFreeze(enableAutoFreeze) {
     autoFreeze = enableAutoFreeze
 }
 
-// 根据用户环境可以自定义代理器
+// 根据用户环境可以自定义代理对象数组
 export function setUseProxies(value) {
     useProxies = value
 }
 
-// 返回当前环境的代理器
+// 返回当前环境的代理对象数组;
+// 所谓代理对象数组是因为对于整个对象树中所有非叶子节点的访问都需要创建新的代理,而无法通过单一的代理对象来访问深层的属性
 export function getUseProxies() {
     return useProxies
 }
@@ -69,7 +70,6 @@ export function freeze(value) {
     return value
 }
 
-
 export function original(value) {
     if (value && value[PROXY_STATE]) {
         return value[PROXY_STATE].base
@@ -89,7 +89,7 @@ export const assign =
         return target
     }
 
-    // 浅拷贝
+// 浅拷贝
 export function shallowCopy(value) {
     if (Array.isArray(value)) return value.slice()
     const target = value.__proto__ === undefined ? Object.create(null) : {}
@@ -110,10 +110,10 @@ export function has(thing, prop) {
     return Object.prototype.hasOwnProperty.call(thing, prop)
 }
 
-// 从draft状态到nextState的处理逻辑 
+// 从draft状态到nextState的处理逻辑
 export function finalize(base, path, patches, inversePatches) {
     if (isProxy(base)) {
-        const state = base[PROXY_STATE];
+        const state = base[PROXY_STATE]
 
         // 类似patches回放，当currentState某个属性发生修改，先记录在patch中
         if (state.modified === true) {
@@ -126,7 +126,7 @@ export function finalize(base, path, patches, inversePatches) {
                 path,
                 patches,
                 inversePatches
-            );
+            )
             generatePatches(
                 state,
                 path,
@@ -134,7 +134,7 @@ export function finalize(base, path, patches, inversePatches) {
                 inversePatches,
                 state.base,
                 result
-            );
+            )
             return result
         } else {
             // 如果没有任何修改操作，则直接返回原对象，这就是一种称为copy-on-write的结构共享的方式
@@ -152,7 +152,7 @@ function finalizeObject(copy, state, path, patches, inversePatches) {
         if (value !== base[prop]) {
             // 如果state对象存在assigned属性对象，且该属性对象具有prop属性则不产生patches
             const generatePatches = patches && !has(state.assigned, prop)
-            
+
             // 递归进行处理，参数inversePatches主要用于回放操作
             copy[prop] = finalize(
                 value,
@@ -169,7 +169,6 @@ function finalizeObject(copy, state, path, patches, inversePatches) {
 
 // 对没有被代理的对象的修改操作
 function finalizeNonProxiedObject(parent) {
-
     // 判定parent对象是否可被代理，所谓可被代理即对象parent要么是数组要么是普通对象
     if (!isProxyable(parent)) return
 
@@ -178,7 +177,6 @@ function finalizeNonProxiedObject(parent) {
 
     // 遍历parent对象属性或者数组元素
     each(parent, (i, child) => {
-
         // 如果属性被代理，则处理；否则继续递归调用
         if (isProxy(child)) {
             parent[i] = finalize(child)
