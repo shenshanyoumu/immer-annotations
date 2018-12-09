@@ -1,0 +1,45 @@
+{
+  "name": "immer",
+  "version": "1.8.0",
+  "description": "Create your next immutable state by mutating the current one",
+  "scripts": {
+    "prettier": "prettier \"*/**/*.js\" \"*/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "precommit": "lint-staged"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mweststrate/immer.git"
+  },
+  "keywords": [
+    "immutable",
+    "mutable",
+    "copy-on-write"
+  ],
+  "author": "Michel Weststrate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mweststrate/immer/issues"
+  },
+  "homepage": "https://github.com/mweststrate/immer#readme",
+  "devDependencies": {
+    "deep-freeze": "^0.0.1",
+    "immutable": "^3.8.2",
+    "lint-staged": "^6.1.0",
+    "lodash": "^4.17.4",
+    "lodash.clonedeep": "^4.5.0",
+    "np": "^2.20.1",
+    "prettier": "^1.9.2",
+    "seamless-immutable": "^7.1.3",
+    "typescript": "2.8.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
