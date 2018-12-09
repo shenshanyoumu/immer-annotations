@@ -50,7 +50,7 @@ export function isProxy(value) {
     return !!value && !!value[PROXY_STATE]
 }
 
-//  判断给定参数value是否能够被代理拦截，无法拦截对象属性访问则immer也就无法工作
+//  判断给定参数value是否可以被代理，只有普通对象和数组对象的属性访问可以被代理
 export function isProxyable(value) {
     if (!value) return false
     if (typeof value !== "object") {
@@ -70,6 +70,7 @@ export function freeze(value) {
     return value
 }
 
+// 得到代理对象的原对象
 export function original(value) {
     if (value && value[PROXY_STATE]) {
         return value[PROXY_STATE].base
