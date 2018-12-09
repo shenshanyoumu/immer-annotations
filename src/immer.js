@@ -49,7 +49,7 @@ export function produce(baseState, producer, patchListener) {
             )
     }
 
-    // 只能对普通对象和数组进行代理处理
+    // 为了增强immer的应用场景，即使不可被代理的对象也可以执行开发者定义的producer函数
     if (!isProxyable(baseState)) {
         const returnValue = producer(baseState)
         return returnValue === undefined
@@ -57,7 +57,7 @@ export function produce(baseState, producer, patchListener) {
             : normalizeResult(returnValue)
     }
 
-    // See #100, don't nest producers
+    //如果原对象已经被代理处理，则执行下面操作
     if (isProxy(baseState)) {
         const returnValue = producer.call(baseState, baseState)
         return returnValue === undefined
@@ -65,7 +65,7 @@ export function produce(baseState, producer, patchListener) {
             : normalizeResult(returnValue)
     }
 
-    //
+    //如果原对象可被代理，并且还没有被代理，则调用代理生成函数
     return normalizeResult(
         getUseProxies()
             ? produceProxy(baseState, producer, patchListener)
@@ -73,7 +73,7 @@ export function produce(baseState, producer, patchListener) {
     )
 }
 
-//
+//如果最终经过固化的对象是内置状态，则返回undefined
 function normalizeResult(result) {
     return result === NOTHING ? undefined : result
 }

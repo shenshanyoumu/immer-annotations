@@ -61,7 +61,8 @@ arrayTraps.set = function(state, prop, value) {
     return objectTraps.set.call(this, state[0], prop, value)
 }
 
-// 参数base是真正传递给immer处理的对象，比如redux库中reducer处理的state对象
+// 由于对象结构具有树形层次，而代理方式无法访问深层的属性，因此需要针对对象树中每一层属性访问创建代理对象
+// 下面针对代理对象的处理需求，配套生成扩展的状态子树
 function createState(parent, base) {
     return {
         modified: false, //判断当前JS对象树是否发生过修改操作
@@ -213,7 +214,7 @@ export function produceProxy(baseState, producer, patchListener) {
         } else {
             result = finalize(rootProxy, [], patches, inversePatches)
         }
-        // 代理对象调用revoke将会处理垃圾回收
+        // 代理对象调用revoke将会处理垃圾回收.
         each(proxies, (_, p) => p.revoke())
         patchListener && patchListener(patches, inversePatches)
         return result
